@@ -46,3 +46,5 @@ def makeResults():
     df.to_csv(csv_output_path, index=False)
 
     print(f"✅ Results saved to {csv_output_path}")
+
+# makeResults()

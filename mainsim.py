@@ -4,10 +4,11 @@ import threading
 import subprocess
 import time
 from results import makeResults
+from ppo_model import PPOAgent
 
 BASE_PORT = 3000
-jar_path = "DDQN_ACT_8VM.jar"
-MODEL_PATH = "C:/Users/ss4587s/Desktop/DDQN-150/checkpoints"
+jar_path = "PPO_ACT_10VM.jar"
+MODEL_PATH = "C:/Users/ss4587s/Desktop/DDQN-150/checkpoints/checkpoint_step_3200.pth"
 num_epochs = 100
 MAX_CONCURRENT = 2  # Limit to 2 concurrent Java processes
 
@@ -23,12 +24,16 @@ EXPERIMENT_CONDITIONS = {
     # "RL-9": ["--", BASE_PORT+6, 450, 5, num_epochs, "DY-V2-450"],
     # "RL-19": ["--", BASE_PORT+6, 500, 5, num_epochs, "DY-V2-500"],
     # "RL-6": ["--", BASE_PORT+6, 100, 3 ]
-    "RL-1": [MODEL_PATH+"/checkpoint_step_900.pth", BASE_PORT+1, 250, 4, num_epochs, "RL-M50-CK900-B250-8VM"],
-    "RL-2": [MODEL_PATH+"/checkpoint_step_900.pth", BASE_PORT+2, 300, 4, num_epochs, "RL-M50-CK900-B300-8VM"],
-    "RL-3": [MODEL_PATH+"/checkpoint_step_900.pth", BASE_PORT+3, 350, 4, num_epochs, "RL-M50-CK900-B350-8VM"],
-    "RL-4": [MODEL_PATH+"/checkpoint_step_900.pth", BASE_PORT+4, 400, 4, num_epochs, "RL-M50-CK900-B400-8VM"],
-    "RL-5": [MODEL_PATH+"/checkpoint_step_900.pth", BASE_PORT+5, 450, 4, num_epochs, "RL-M50-CK900-B450-8VM"],
-    "RL-6": [MODEL_PATH+"/checkpoint_step_900.pth", BASE_PORT+6, 500, 4, num_epochs, "RL-M50-CK900-B500-8VM"],
+    "RL-1": [MODEL_PATH, BASE_PORT+1, 50, 4, num_epochs, "RL-PPO-M50-CK3200-B50"],
+    "RL-2": [MODEL_PATH, BASE_PORT+2, 100, 4, num_epochs, "RL-PPO-M50-CK3200-B100"],
+    "RL-3": [MODEL_PATH, BASE_PORT+3, 150, 4, num_epochs, "RL-PPO-M50-CK3200-B150"],
+    "RL-4": [MODEL_PATH, BASE_PORT+4, 200, 4, num_epochs, "RL-PPO-M50-CK3200-B200"],
+    "RL-5": [MODEL_PATH, BASE_PORT+5, 250, 4, num_epochs, "RL-PPO-M50-CK3200-B250"],
+    "RL-6": [MODEL_PATH, BASE_PORT+6, 300, 4, num_epochs, "RL-PPO-M50-CK3200-B300"],
+    "RL-7": [MODEL_PATH, BASE_PORT+7, 350, 4, num_epochs, "RL-PPO-M50-CK3200-B350"],
+    "RL-8": [MODEL_PATH, BASE_PORT+8, 400, 4, num_epochs, "RL-PPO-M50-CK3200-B400"],
+    "RL-9": [MODEL_PATH, BASE_PORT+9, 450, 4, num_epochs, "RL-PPO-M50-CK3200-B450"],
+    "RL-10": [MODEL_PATH, BASE_PORT+10, 500, 4, num_epochs, "RL-PPO-M50-CK3200-B500"],
 
 }
 
@@ -39,7 +44,8 @@ semaphore = threading.Semaphore(MAX_CONCURRENT)
 # Start Flask servers
 for name, (model_path, port, _, _, _, _) in EXPERIMENT_CONDITIONS.items():
 # for name, (model_path, port, _, _ ) in EXPERIMENT_CONDITIONS.items(): 
-    agent = DQNAgent(model_path)
+    # agent = DQNAgent(model_path)
+    agent = PPOAgent(model_path)
     app = create_flask_app(agent, port)
     thread = threading.Thread(target=app.run, kwargs={"port": port})
     thread.daemon = True
