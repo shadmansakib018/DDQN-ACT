@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 class DQN(nn.Module):
-    def __init__(self, input_dim=21, output_dim=8):
+    def __init__(self, input_dim=21, output_dim=10): # output dim change from 10 to 8
         super(DQN, self).__init__()
         self.model = nn.Sequential(
             nn.Linear(input_dim, 256),
@@ -21,7 +21,7 @@ class DQN(nn.Module):
         return self.model(x)
 
 class DQNAgent:
-    def __init__(self, path, state_dim=21, action_dim=8, gamma=0.99, lr=1e-3, batch_size=64):
+    def __init__(self, path, state_dim=21, action_dim=10, gamma=0.99, lr=1e-3, batch_size=64):  # action dim change from 10 to 8
         self.path = path
         self.state_dim = state_dim
         self.action_dim = action_dim
