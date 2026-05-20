@@ -35,7 +35,7 @@ for i, col in enumerate(df.columns, start=1):
         )
 
 ax.set_title("Box and Whisker Plot", fontsize=14)
-ax.set_ylabel("Value")
+ax.set_ylabel("Avg Response Time (s)")
 ax.grid(axis="y", linestyle="--", alpha=0.5)
 
 plt.tight_layout()
