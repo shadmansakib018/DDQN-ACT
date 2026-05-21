@@ -9,8 +9,8 @@ from ppo_model import PPOAgent
 BASE_PORT = 3000
 # jar_path = "24HOUR-SIMV3.jar"
 jar_path = "24HOUR-SIM-PPO.jar"
-MODEL_PATH = "C:/Users/ss4587s/Desktop/DDQN-150/checkpoints/checkpoint_step_3200.pth" # PPO
-# MODEL_PATH = "C:/Users/ss4587s/Desktop/checkpoint_step_5200.pth"
+MODEL_PATH = "C:/Users/ss4587s/Desktop/DDQN-150/checkpoints/checkpoint_step_3200.pth" # PPO, placed the model checkpoint in root
+# MODEL_PATH = "C:/Users/ss4587s/Desktop/checkpoint_step_5200.pth" # DDQN
 num_epochs = 100
 MAX_CONCURRENT = 2  # Limit to 2 concurrent Java processes
 
