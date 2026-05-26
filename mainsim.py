@@ -8,13 +8,24 @@ from ppo_model import PPOAgent
 
 BASE_PORT = 3000
 # jar_path = "24HOUR-SIMV3.jar"
-jar_path = "24HOUR-SIM-PPO.jar"
-MODEL_PATH = "C:/Users/ss4587s/Desktop/DDQN-150/checkpoints/checkpoint_step_3200.pth" # PPO, placed the model checkpoint in root
+jar_path = "PPO_ACT2_8VM.jar"
+MODEL_PATH = "./checkpoint_step_800_PPO_8VM.pth" 
+# MODEL_PATH = "C:/Users/ss4587s/Desktop/DDQN-150/checkpoints/checkpoint_step_3200.pth" # PPO, placed the model checkpoint in root
 # MODEL_PATH = "C:/Users/ss4587s/Desktop/checkpoint_step_5200.pth" # DDQN, placed the model checkpoint in root
 num_epochs = 100
 MAX_CONCURRENT = 2  # Limit to 2 concurrent Java processes
 
 EXPERIMENT_CONDITIONS = {
+    "RL-1": [MODEL_PATH, BASE_PORT+1, 50, 4, num_epochs, "PPO-8VM-B50"],
+    "RL-2": [MODEL_PATH, BASE_PORT+2, 100, 4, num_epochs, "PPO-8VM-B100"],
+    "RL-3": [MODEL_PATH, BASE_PORT+3, 150, 4, num_epochs, "PPO-8VM-B150"],
+    "RL-4": [MODEL_PATH, BASE_PORT+4, 200, 4, num_epochs, "PPO-8VM-B200"],
+    "RL-5": [MODEL_PATH, BASE_PORT+5, 250, 4, num_epochs, "PPO-8VM-B250"],
+    "RL-6": [MODEL_PATH, BASE_PORT+6, 300, 4, num_epochs, "PPO-8VM-B300"],
+    "RL-7": [MODEL_PATH, BASE_PORT+7, 350, 4, num_epochs, "PPO-8VM-B350"],
+    "RL-8": [MODEL_PATH, BASE_PORT+8, 400, 4, num_epochs, "PPO-8VM-B400"],
+    "RL-9": [MODEL_PATH, BASE_PORT+9, 450, 4, num_epochs, "PPO-8VM-B450"],
+    "RL-10":[MODEL_PATH, BASE_PORT+10,500, 4, num_epochs, "PPO-8VM-B500"],
     # "RL-1": [MODEL_PATH+"/checkpoint_step_2200.pth", BASE_PORT+1, 50, 4, num_epochs, "RL-M150-CK2200-B50"],
     # "RL-2": [MODEL_PATH+"/checkpoint_step_2200.pth", BASE_PORT+2, 100, 4, num_epochs, "RL-M150-CK2200-B100"],
     # "RL-3": [MODEL_PATH+"/checkpoint_step_2200.pth", BASE_PORT+3, 150, 4, num_epochs, "RL-M150-CK2200-B150"],
@@ -36,7 +47,7 @@ EXPERIMENT_CONDITIONS = {
     # "RL-8": [MODEL_PATH, BASE_PORT+8, 400, 4, num_epochs, "RL-PPO-M50-CK3200-B400"],
     # "RL-9": [MODEL_PATH, BASE_PORT+9, 450, 4, num_epochs, "RL-PPO-M50-CK3200-B450"],
     # "RL-10": [MODEL_PATH, BASE_PORT+10, 500, 4, num_epochs, "RL-PPO-M50-CK3200-B500"],
-    "RL-1": [MODEL_PATH, BASE_PORT+1, 0, 4],
+    # "RL-1": [MODEL_PATH, BASE_PORT+1, 0, 4], # this is 24 hour testing
 }
 
 flask_threads = []
@@ -44,8 +55,8 @@ experiment_threads = []
 semaphore = threading.Semaphore(MAX_CONCURRENT)
 
 # Start Flask servers
-# for name, (model_path, port, _, _, _, _) in EXPERIMENT_CONDITIONS.items():
-for name, (model_path, port, _, _ ) in EXPERIMENT_CONDITIONS.items(): # uncomment for 24 hour simulations
+for name, (model_path, port, _, _, _, _) in EXPERIMENT_CONDITIONS.items():
+# for name, (model_path, port, _, _ ) in EXPERIMENT_CONDITIONS.items(): # uncomment for 24 hour simulations
     # agent = DQNAgent(model_path)
     agent = PPOAgent(model_path)
     app = create_flask_app(agent, port)
@@ -57,23 +68,23 @@ for name, (model_path, port, _, _ ) in EXPERIMENT_CONDITIONS.items(): # uncommen
     time.sleep(1.5)  # Allow server to start
 
 # Worker function to run each experiment
-# def run_experiment(name, port, batch_size, lb_type, epochs, simName):
-def run_experiment(name, port, batch_size, lb_type): # uncomment for 24 hour simulations
+def run_experiment(name, port, batch_size, lb_type, epochs, simName):
+# def run_experiment(name, port, batch_size, lb_type): # uncomment for 24 hour simulations
     with semaphore:
         print(f"🚀 Starting experiment {name}...")
         proc = subprocess.Popen([
             "java", "-jar", jar_path,
-            # str(port), str(batch_size), str(lb_type), str(epochs), simName
-            str(port), str(batch_size), str(lb_type) # uncomment for 24 hour simulations
+            str(port), str(batch_size), str(lb_type), str(epochs), simName
+            # str(port), str(batch_size), str(lb_type) # uncomment for 24 hour simulations
         ])
         proc.wait()
         print(f"✅ Finished experiment {name}")
 
 # Create and start threads (up to MAX_CONCURRENT will run at a time)
-# for name, (model_path, port, batch_size, lb_type, epochs, simName) in EXPERIMENT_CONDITIONS.items():
-for name, (model_path, port, batch_size, lb_type) in EXPERIMENT_CONDITIONS.items(): # uncomment for 24 hour simulations
-    # thread = threading.Thread(target=run_experiment, args=(name, port, batch_size, lb_type, epochs, simName))
-    thread = threading.Thread(target=run_experiment, args=(name, port, batch_size, lb_type)) # uncomment for 24 hour simulations
+for name, (model_path, port, batch_size, lb_type, epochs, simName) in EXPERIMENT_CONDITIONS.items():
+# for name, (model_path, port, batch_size, lb_type) in EXPERIMENT_CONDITIONS.items(): # uncomment for 24 hour simulations
+    thread = threading.Thread(target=run_experiment, args=(name, port, batch_size, lb_type, epochs, simName))
+    # thread = threading.Thread(target=run_experiment, args=(name, port, batch_size, lb_type)) # uncomment for 24 hour simulations
     thread.start()
     experiment_threads.append(thread)
 

@@ -4,7 +4,7 @@ from torch.distributions import Categorical
 
 
 class ActorCritic(nn.Module):
-    def __init__(self, input_dim=21, output_dim=10):
+    def __init__(self, input_dim=21, output_dim=8):
         super().__init__()
         self.shared = nn.Sequential(
             nn.Linear(input_dim, 256), nn.ReLU(),
@@ -25,7 +25,7 @@ class ActorCritic(nn.Module):
 
 
 class PPOAgent:
-    def __init__(self, path, state_dim=21, action_dim=10):
+    def __init__(self, path, state_dim=21, action_dim=8):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(self.device)
 
