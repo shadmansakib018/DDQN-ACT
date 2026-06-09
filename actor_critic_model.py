@@ -1,0 +1,44 @@
+import torch
+import torch.nn as nn
+from torch.distributions import Categorical
+
+
+class ACNet(nn.Module):
+    def __init__(self, input_dim=21, output_dim=10):
+        super().__init__()
+        self.shared = nn.Sequential(
+            nn.Linear(input_dim, 256), nn.ReLU(),
+            nn.Linear(256, 128),       nn.ReLU(),
+        )
+        self.actor = nn.Sequential(
+            nn.Linear(128, 64), nn.ReLU(),
+            nn.Linear(64, output_dim)
+        )
+        self.critic = nn.Sequential(
+            nn.Linear(128, 64), nn.ReLU(),
+            nn.Linear(64, 1)
+        )
+
+    def forward(self, x):
+        shared = self.shared(x)
+        return self.actor(shared), self.critic(shared)
+
+
+class ACAgent:
+    def __init__(self, path, state_dim=21, action_dim=10):
+        self.device = torch.device("cpu")
+
+        self.ac_net = ACNet(state_dim, action_dim).to(self.device)
+        self.load_checkpoint(path)
+
+    def act(self, state):
+        s_t = torch.FloatTensor(state).unsqueeze(0).to(self.device)
+        with torch.no_grad():
+            logits, _ = self.ac_net(s_t)
+            action = Categorical(logits=logits).probs.argmax().item()
+        return action
+
+    def load_checkpoint(self, path):
+        self.ac_net.load_state_dict(torch.load(path, map_location=self.device))
+        self.ac_net.eval()
+        print(f"Loaded checkpoint from {path}")
