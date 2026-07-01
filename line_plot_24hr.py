@@ -12,10 +12,10 @@ colors = ["tab:blue", "tab:orange", "tab:green", "tab:red"]
 
 fig, ax = plt.subplots(figsize=(12, 6))
 
-for col, color in zip(df.columns, colors):
+for col in df.columns:
     y = df[col].values
     spline = make_interp_spline(x, y, k=3)
-    ax.plot(x_smooth, spline(x_smooth), label=col, color=color, linewidth=2)
+    ax.plot(x_smooth, spline(x_smooth), label=col, linewidth=2)
 
 ax.set_title("24-Hour Simulation Results", fontsize=14)
 ax.set_xlabel("Hour")
