@@ -17,13 +17,16 @@ for col in df.columns:
     spline = make_interp_spline(x, y, k=3)
     ax.plot(x_smooth, spline(x_smooth), label=col, linewidth=2)
 
-ax.set_title("24-Hour Simulation Results", fontsize=14)
-ax.set_xlabel("Hour")
-ax.set_ylabel("Avg Response Time (s)")
+ax.set_title("24-Hour Simulation Results", fontsize=14, fontweight="bold")
+ax.set_xlabel("Hour", fontweight="bold")
+ax.set_ylabel("Avg Response Time (s)", fontweight="bold")
 ax.set_xticks(range(0, 25))
-ax.legend()
+for label in ax.get_xticklabels() + ax.get_yticklabels():
+    label.set_fontweight("bold")
+    label.set_fontsize(11)
+ax.legend(prop={"weight": "bold"})
 ax.grid(linestyle="--", alpha=0.5)
 
 plt.tight_layout()
-plt.savefig("line_plot_24hr.png", dpi=150)
+plt.savefig("line_plot_24hr.png", dpi=300)
 plt.show()
